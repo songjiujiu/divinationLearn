@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReaderHome from './components/ReaderHome.jsx';
-import Glossary from './components/Glossary.jsx';
 import BookReader from './components/BookReader.jsx';
-import { SymbolsView, ReadingView, ReaderNotes } from './components/InterpretationViews.jsx';
+import { SymbolsView, ReadingView } from './components/InterpretationViews.jsx';
 import Backup from './components/Backup.jsx';
 import { normalizeState } from './lib/backup.js';
 import { hexagrams } from './data/interpretations.js';
@@ -10,9 +9,9 @@ import { bookIndex } from './data/book-index.js';
 import './reader.css';
 
 const storageKey = 'yixue-study-state';
-const pages = { home: '解读路线', symbols: '卦象图解', reading: '白话导读', book: '原书阅读', glossary: '词语白话', notes: '我的摘记', data: '阅读档案' };
-const navigation = ['home', 'symbols', 'book', 'glossary', 'notes'];
-const aliases = { learn: 'home', knowledge: 'glossary', cases: 'data', review: 'data' };
+const pages = { home: '解读路线', symbols: '卦象图解', reading: '白话导读', book: '原书阅读', data: '阅读档案' };
+const navigation = ['home', 'symbols', 'book'];
+const aliases = { learn: 'home', knowledge: 'home', glossary: 'home', notes: 'home', cases: 'data', review: 'data' };
 function readRoute() {
   const [requested, item] = window.location.hash.slice(1).split('/');
   const page = aliases[requested] || requested;
@@ -32,8 +31,6 @@ function NavIcon({ name }) {
     home: <><path d="M6 5h12M6 12h8M6 19h12"/><circle cx="3" cy="5" r=".6"/><circle cx="3" cy="12" r=".6"/><circle cx="3" cy="19" r=".6"/></>,
     symbols: <path d="M4 5h16M4 12h6m4 0h6M4 19h16"/>,
     reading: <path d="M12 5v15M12 6C8 3 5 3 2 4v14c4-1 7 0 10 2 3-2 6-3 10-2V4c-3-1-6-1-10 2Z"/>,
-    glossary: <path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h4"/>,
-    notes: <path d="m5 15-1 5 5-1L20 8l-4-4L5 15ZM14 6l4 4M4 4h6"/>,
   };
   return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name === 'book' ? 'reading' : name]}</svg>;
 }
@@ -104,8 +101,6 @@ export default function App() {
         {page === 'symbols' && <SymbolsView/>}
         {page === 'book' && <BookReader chapterId={route.item || state.reader.selectedHexagram} onSelect={openBook} notes={state.reader.notes} onNoteChange={(id, note) => updateReader(reader => ({ notes: { ...reader.notes, [id]: note } }))} bookmarks={state.reader.bookmarks} onToggleBookmark={id => updateReader(reader => ({ bookmarks: { ...reader.bookmarks, [id]: !reader.bookmarks[id] } }))} onOpenGuide={openHexagram}/>}
         {page === 'reading' && <ReadingView selectedId={selectedId} onSelect={openHexagram} notes={state.reader.notes} onNoteChange={(id, note) => updateReader(reader => ({ notes: { ...reader.notes, [id]: note } }))} bookmarks={state.reader.bookmarks} onToggleBookmark={id => updateReader(reader => ({ bookmarks: { ...reader.bookmarks, [id]: !reader.bookmarks[id] } }))}/>}
-        {page === 'glossary' && <Glossary selectedId={route.item}/>}
-        {page === 'notes' && <ReaderNotes notes={state.reader.notes} bookmarks={state.reader.bookmarks} onOpen={openHexagram}/>}
         {page === 'data' && <><div className="reader-page-head"><span className="eyebrow">KEEP YOUR WORDS</span><h1>把理解，慢慢留下来。</h1><p>阅读笔记与收藏保存在当前浏览器。导出一份档案，也能把它们带到另一个浏览器。</p></div><Backup state={state} onRestore={restoreState} notify={setToast}/><LegacyArchive state={state}/></>}
       </div>
       <footer className="reader-footer"><a href="#home">易经白话</a><span>底本：《周易今注今译》 · 南怀瑾、徐芹庭注译</span><a href="#book/copyright">本书版本与出处 ↗</a></footer>

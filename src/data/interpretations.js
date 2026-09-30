@@ -15,7 +15,6 @@ export const readingRoute = [
     ],
     takeaway: '先认清原文，再看这本书怎样解释它。',
     example: { title: '阅读示例 · 乾卦的四个字', text: '遇到“乾，元、亨、利、贞。”，先读原文；今注说明字义，今译把整句连起来，今释再说明四德与乾的关系。一次读懂这一小段，就有了继续阅读的入口。' },
-    termIds: ['yi', 'book-note', 'book-translation', 'book-commentary'],
     link: { page: 'reading/qian', label: '按本书从乾卦读起' },
   },
   {
@@ -28,7 +27,6 @@ export const readingRoute = [
     ],
     takeaway: '先分阴阳，再从下往上认出下卦、上卦。',
     example: { title: '看一张图 · 谦卦的山在哪里', text: '谦卦下面三爻是艮，取象为山；上面三爻是坤，取象为地。因此读作“艮下坤上”，书中《象传》写“地中有山，谦”。交换上下位置，便会成为另一个卦。' },
-    termIds: ['yin-yang', 'yao', 'gua', 'xiang'],
     link: { page: 'symbols', label: '看懂阴阳爻和八卦' },
   },
   {
@@ -41,8 +39,7 @@ export const readingRoute = [
     ],
     takeaway: '原文里也有经、传之别；今注、今译、今释则是本书的解说层。',
     example: { title: '原文对照 · 三句话各有位置', text: '“乾，元、亨、利、贞。”是卦辞；“初九，潜龙勿用。”是爻辞；“天行健，君子以自强不息。”是《象传》里的话。三者都能在本书的原文中读到，但承担的作用不同。' },
-    termIds: ['guaci', 'yaoci', 'nine-six', 'tuan', 'xiang'],
-    link: { page: 'glossary', label: '查清经、传与本书注译' },
+    link: { page: 'book/fan-li', label: '阅读本书凡例，了解注译层次' },
   },
   {
     id: 'plain-reading', title: '古文怎么读成白话？', short: '先字义，再句意', kicker: '沿着本书的四层读',
@@ -54,7 +51,6 @@ export const readingRoute = [
     ],
     takeaway: '字义、句意、解释理由逐层看；现代联想另作一层。',
     example: { title: '阅读示例 · 从“汔济”到收尾', text: '“汔济”是原文字词；“几乎渡过”是依本书今注理解字义；小狐濡尾的整句意思看今译；为何借此说未能贯彻始终，要继续看《彖传》及注译。想到“提交文件前再核对一次”，则属于本站的现代类比。' },
-    termIds: ['book-note', 'book-translation', 'book-commentary', 'judgements'],
     link: { page: 'reading/wei-ji', label: '按原文、今注、今译、今释读未济' },
   },
   {
@@ -67,7 +63,6 @@ export const readingRoute = [
     ],
     takeaway: '写清书中一个意思、眼前一件事和一个可以核实的下一步。',
     example: { title: '生活类比 · 一个刚起步的读书小组', text: '几位朋友刚有一起读书的想法。借本书屯卦的萌芽解释，可以想：先保护这点兴趣，再约一小段共读、说清时间和主持人。如何安排仍由大家的实际条件决定。' },
-    termIds: ['timing', 'judgements', 'change'],
     link: { page: 'reading', label: '带着一个小问题读卦' },
   },
 ];

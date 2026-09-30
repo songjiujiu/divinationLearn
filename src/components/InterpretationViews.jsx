@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { trigrams, hexagrams } from '../data/interpretations.js';
-import { bookIndex } from '../data/book-index.js';
+import { getHexagramCombination } from '../data/hexagram-combinations.js';
 import '../interpretation-views.css';
 
 const naturePaths = {
@@ -48,9 +48,11 @@ export function SymbolsView() {
   const selected = trigrams.find(item => item.id === selectedId) || trigrams[0];
   const upper = trigrams.find(item => item.id === upperId) || trigrams[0];
   const lower = trigrams.find(item => item.id === lowerId) || trigrams[0];
-  const combination = hexagrams.find(item => item.upper === upper.id && item.lower === lower.id);
+  const combination = getHexagramCombination(upper.id, lower.id);
+  const hasGuide = combination && hexagrams.some(item => item.id === combination.id);
   const upperInputId = useId();
   const lowerInputId = useId();
+  const resultId = useId();
   return <div className="iv-view iv-symbols-view">
     <ViewIntro eyebrow="八种自然意象 · THE EIGHT TRIGRAMS" title="从天地山泽，认识八卦">先看符号，再看它借用了什么自然意象。点开一卦，读懂三个爻如何组成一个形象。</ViewIntro>
     <div className="iv-symbol-grid" role="group" aria-label="选择八卦意象">{trigrams.map(item => <button type="button" key={item.id} className={`iv-symbol-card ${selected.id === item.id ? 'iv-is-selected' : ''}`} aria-pressed={selected.id === item.id} onClick={() => setSelectedId(item.id)}>
@@ -62,9 +64,29 @@ export function SymbolsView() {
       <div className="iv-symbol-lines"><TrigramMark trigram={selected} large /><small>三爻为一卦<br/>从下向上看</small></div>
     </section>
     <section className="iv-combination">
-      <div className="iv-combination-intro"><p className="eyebrow">把符号放在一起 · COMPOSITION</p><h2>三爻叠三爻，就有了六爻</h2><p>下卦在下，上卦在上。八卦两两组合，共有 64 种六爻结构。试着换一个符号，看看构成怎样变化。</p><div className="iv-line-key"><span><i className="iv-key-yang" />阳爻：完整的一横</span><span><i className="iv-key-yin" />阴爻：中间断开</span></div><p className="iv-small-note">图中的“上、下”指符号位置。这里展示卦的构成，不给出吉凶判断。</p></div>
-      <div className="iv-combination-controls"><div className="iv-select-field"><label htmlFor={upperInputId}>上卦 · 上面三爻</label><select id={upperInputId} value={upper.id} onChange={event => setUpperId(event.target.value)}>{trigrams.map(item => <option key={item.id} value={item.id}>{item.name} · {item.nature}</option>)}</select></div><div className="iv-select-field"><label htmlFor={lowerInputId}>下卦 · 下面三爻</label><select id={lowerInputId} value={lower.id} onChange={event => setLowerId(event.target.value)}>{trigrams.map(item => <option key={item.id} value={item.id}>{item.name} · {item.nature}</option>)}</select></div><button type="button" className="iv-swap-button" onClick={() => { setUpperId(lower.id); setLowerId(upper.id); }}>⇅ 交换上下卦</button></div>
-      <div className="iv-combination-preview"><HexagramMark upper={upper} lower={lower} numbered /><p aria-live="polite">{combination ? `${combination.name} · 第 ${combination.number} 卦` : `${upper.name}上 · ${lower.name}下`}</p><small>{upper.nature}在上，{lower.nature}在下</small></div>
+      <div className="iv-combination-intro"><p className="eyebrow">把符号放在一起 · COMPOSITION</p><h2>三爻叠三爻，就有了六爻</h2><p>选一个上卦，再选一个下卦，旁边就会生成对应的六爻卦。八卦两两组合，可以得到完整的六十四卦。</p><div className="iv-line-key"><span><i className="iv-key-yang" />阳爻：完整的一横</span><span><i className="iv-key-yin" />阴爻：中间断开</span></div><p className="iv-small-note">六爻从下往上数。交换上下卦时，看看卦名与卦象发生了什么变化。</p></div>
+      <div className="iv-combination-controls">
+        <div className="iv-select-field"><label htmlFor={upperInputId}>上卦 · 上面三爻</label><select id={upperInputId} value={upper.id} aria-controls={resultId} onChange={event => setUpperId(event.target.value)}>{trigrams.map(item => <option key={item.id} value={item.id}>{item.name} · {item.nature}</option>)}</select></div>
+        <div className="iv-select-field"><label htmlFor={lowerInputId}>下卦 · 下面三爻</label><select id={lowerInputId} value={lower.id} aria-controls={resultId} onChange={event => setLowerId(event.target.value)}>{trigrams.map(item => <option key={item.id} value={item.id}>{item.name} · {item.nature}</option>)}</select></div>
+        <button type="button" className="iv-swap-button" aria-controls={resultId} onClick={() => { setUpperId(lower.id); setLowerId(upper.id); }}>⇅ 交换上下卦</button>
+        <p className="iv-combination-hint">选择两个卦，即时看它们组成哪一卦。</p>
+      </div>
+      <section id={resultId} className="iv-combination-preview" aria-label="上下卦组合结果">
+        <header className="iv-result-heading" role="status" aria-live="polite" aria-atomic="true">
+          <span className="iv-result-label">组合成的新卦</span>
+          <h3>{combination?.fullName || `${upper.name}上${lower.name}下`}</h3>
+          <p>{combination && `第 ${combination.number} 卦 · `}{upper.name}上 · {lower.name}下</p>
+        </header>
+        <HexagramMark upper={upper} lower={lower} numbered />
+        <p className="iv-result-nature">{upper.nature}在上，{lower.nature}在下</p>
+        {combination && <>
+          <div className="iv-result-original"><span>本书卦辞</span><blockquote>{combination.originalSegments ? combination.originalSegments.map((segment, index) => segment.type === 'image' ? <img key={index} src={segment.src} alt={segment.alt || '原书字形'} className="iv-original-glyph" /> : <React.Fragment key={index}>{segment.text}</React.Fragment>) : combination.original}</blockquote></div>
+          <div className="iv-result-actions">
+            <a className="button small" href={`#book/${combination.id}`}>读「{combination.name}」卦原文 <span aria-hidden="true">↗</span></a>
+            {hasGuide && <a className="iv-text-button" href={`#reading/${combination.id}`}>先看白话导读 →</a>}
+          </div>
+        </>}
+      </section>
     </section>
   </div>;
 }
@@ -102,20 +124,5 @@ export function ReadingView({ selectedId, onSelect, notes = {}, onNoteChange, bo
         <section className="iv-reflection"><p className="iv-section-label">04 / 留一个问题给自己</p><h3>{selected.prompt}</h3><p className="iv-reading-caution">{selected.caution}</p><label htmlFor={noteId}>我的理解</label><textarea id={noteId} rows={6} value={note} onChange={event => onNoteChange(selected.id, event.target.value)} placeholder="哪句话让你有感触？它让你想到什么经历？用自己的话记下来。" /><div className="iv-note-footer"><span>输入即保存，下次读到这里可以接着写。</span><span>{Array.from(note).length} 字</span></div></section>
       </article>
     </div>
-  </div>;
-}
-
-export function ReaderNotes({ notes = {}, bookmarks = {}, onOpen }) {
-  const [mode, setMode] = useState('all');
-  const entries = bookIndex.map(item => hexagrams.find(guide => guide.id === item.id) || { ...item, name: item.title, theme: item.group, summary: '回到《周易今注今译》对应章节，继续阅读。' });
-  const saved = entries.filter(item => !!bookmarks[item.id]);
-  const written = entries.filter(item => typeof notes[item.id] === 'string' && notes[item.id].trim());
-  const visible = entries.filter(item => mode === 'bookmarks' ? !!bookmarks[item.id] : mode === 'notes' ? typeof notes[item.id] === 'string' && notes[item.id].trim() : !!bookmarks[item.id] || typeof notes[item.id] === 'string' && notes[item.id].trim());
-  return <div className="iv-view iv-notes-view">
-    <ViewIntro eyebrow="属于自己的理解 · READER'S NOTES" title="把读过的，变成自己的话">收藏想重读的一篇，写下此刻的理解。过些日子再读，也许会看到不一样的意思。</ViewIntro>
-    <div className="iv-notes-summary"><div><strong>{saved.length}</strong><span>篇收藏</span></div><div><strong>{written.length}</strong><span>篇札记</span></div><p>不必写得完整。<br/>留下一句话，也是一段阅读的痕迹。</p></div>
-    <div className="iv-notes-filters" role="group" aria-label="筛选阅读记录">{[['all', '全部记录'], ['bookmarks', '我的收藏'], ['notes', '我的札记']].map(([id, title]) => <button key={id} type="button" className={mode === id ? 'iv-is-selected' : ''} aria-pressed={mode === id} onClick={() => setMode(id)}>{title}</button>)}</div>
-    <div className="iv-notes-grid">{visible.map(item => { const note = typeof notes[item.id] === 'string' ? notes[item.id] : ''; return <article className="iv-note-card" key={item.id}><div className="iv-note-card-head"><span>{item.number ? `第 ${String(item.number).padStart(2, '0')} 卦` : item.group}</span>{bookmarks[item.id] && <span className="iv-note-saved">★ 已收藏</span>}</div><h2>{item.name}<span>{item.theme}</span></h2>{note.trim() ? <p className="iv-note-excerpt">{note}</p> : <p className="iv-note-unwritten">{item.summary}<br/><span>还没写札记，下次阅读时留下一点想法。</span></p>}<button type="button" className="iv-text-button" onClick={() => onOpen(item.id)}>{note.trim() ? '继续阅读与书写' : '打开这篇解读'} <span aria-hidden="true">→</span></button></article>; })}</div>
-    {visible.length === 0 && <div className="iv-empty-notes"><span className="iv-empty-mark" aria-hidden="true">一</span><h2>{mode === 'bookmarks' ? '还没有收藏的解读' : mode === 'notes' ? '第一篇札记，从一句话开始' : '给下一次重读，留一点线索'}</h2><p>读到有共鸣的地方，可以收藏这篇，或在文末写下自己的理解。</p><button type="button" className="button" onClick={() => onOpen(hexagrams[0].id)}>从第一篇读起 →</button></div>}
   </div>;
 }

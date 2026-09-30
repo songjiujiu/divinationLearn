@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { readingRoute, hexagrams } from '../data/interpretations.js';
-import { glossary } from '../data/glossary.js';
 
 export default function ReaderHome({ onOpen }) {
   const [active, setActive] = useState(0);
@@ -43,12 +42,11 @@ export default function ReaderHome({ onOpen }) {
           {step.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
           <div className="reader-example"><span>用一个例子理解</span><h4>{step.example.title}</h4><p>{step.example.text}</p></div>
           <div className="reader-takeaway"><span>先记住这一句</span><strong>{step.takeaway}</strong></div>
-          <div className="reader-route-terms">{step.termIds.map(id => { const term = glossary.find(item => item.id === id); return term ? <a href={`#glossary/${id}`} key={id}>{term.term} <span aria-hidden="true">↗</span></a> : null; })}</div>
           <div className="reader-detail-actions"><a className="text-button" href={`#${step.link.page}`}>{step.link.label} ↗</a>{active < readingRoute.length - 1 && <button className="button outline small" onClick={() => chooseStep(active + 1)}>接着看下一个问题 →</button>}</div>
         </article>
       </div>
     </section>
     <section className="reader-samples"><div className="reader-section-heading"><div><span className="eyebrow">MEET AN IDEA</span><h2>从一个熟悉的处境，走近一卦</h2><p>这里的生活问题是帮助理解文本的类比。</p></div><a href="#reading" className="text-button">看全部精选解读 ↗</a></div><div className="reader-sample-grid">{samples.map(item => <button key={item.id} className="reader-sample" onClick={() => onOpen(item.id)}><div><span className="reader-sample-number">{String(item.number).padStart(2, '0')}</span><span className="reader-sample-name">{item.name}</span><span aria-hidden="true">↗</span></div><h3>{item.theme}</h3><p>{item.summary}</p></button>)}</div></section>
-    <aside className="reader-note"><span className="reader-note-mark">读</span><div><h2>原文、解释、自己的理解，分开来看。</h2><p>原文给你线索，白话帮你入门，生活例子帮你提问。不同注本可能有不同理解，可以带着疑问再回到原文。</p></div><a href="#glossary" className="text-button">遇到生词来这里 ↗</a></aside>
+    <aside className="reader-note"><span className="reader-note-mark">读</span><div><h2>原文、解释、自己的理解，分开来看。</h2><p>原文给你线索，白话帮你入门，生活例子帮你提问。不同注本可能有不同理解，可以带着疑问再回到原文。</p></div><a href="#book/fan-li" className="text-button">对照本书的读法 ↗</a></aside>
   </>;
 }
