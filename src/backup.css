@@ -1,0 +1,29 @@
+.backup-panel { margin-top: 26px; }
+.backup-panel > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-weight: 700; list-style: none; }
+.backup-panel > summary::-webkit-details-marker { display: none; }
+.backup-panel > summary::after { content: '+'; font-size: 22px; font-weight: 400; color: var(--green, #496c58); }
+.backup-panel[open] > summary::after { content: '−'; }
+.backup-panel > summary small { margin-left: auto; font-size: 12px; font-weight: 400; color: var(--muted, #74786e); }
+.backup-content { padding-top: 16px; }
+.backup-content > p, .backup-preview > p, .backup-undo p { margin: 0 0 14px; color: var(--muted, #74786e); font-size: 13px; line-height: 1.8; }
+.backup-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.backup-file-label { font-size: 12px; color: var(--muted, #74786e); }
+.backup-file { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; clip: rect(0, 0, 0, 0); clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+.backup-preview { margin-top: 20px; padding: 20px; border: 1px solid #ccdbcc; border-radius: 14px; background: #f2f6ef; }
+.backup-preview h3 { margin: 0 0 10px; font-size: 17px; }
+.backup-filename { overflow-wrap: anywhere; }
+.backup-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.backup-counts div { display: flex; flex-direction: column-reverse; gap: 4px; }
+.backup-counts dt { font-size: 12px; color: var(--muted, #74786e); }
+.backup-counts dd { margin: 0; font-size: 26px; color: var(--green, #496c58); font-weight: 700; }
+.backup-undo { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border, #e2e3d9); }
+.backup-content .backup-status { margin: 14px 0 0; color: #36644b; }
+.backup-content .backup-error { margin: 14px 0 0; color: #963f32; background: #f9ede8; padding: 10px 12px; border-radius: 8px; overflow-wrap: anywhere; }
+.backup-note { display: block; margin-top: 16px; color: var(--muted, #74786e); font-size: 12px; }
+.backup-panel summary:focus-visible { outline: 3px solid #527c60; outline-offset: 6px; border-radius: 4px; }
+@media (max-width: 600px) {
+  .backup-panel > summary small { display: none; }
+  .backup-preview { padding: 14px; }
+  .backup-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .backup-file-label { flex-basis: 100%; }
+}
